@@ -1,60 +1,62 @@
 package co.edu.usa.restg33;
 
-import co.edu.usa.restg33.model.Category;
-import co.edu.usa.restg33.model.Client;
-import co.edu.usa.restg33.model.Message;
-import co.edu.usa.restg33.model.Quadbike;
-import co.edu.usa.restg33.model.Reservation;
-import co.edu.usa.restg33.repository.CategoryRepository;
-import co.edu.usa.restg33.repository.ClientRepository;
-import co.edu.usa.restg33.repository.MessageRepository;
-import co.edu.usa.restg33.repository.QuadbikeRepository;
-import co.edu.usa.restg33.repository.ReservationRepository;
+
+import co.edu.usa.restg33.model.Producto;
+import co.edu.usa.restg33.model.RegistroProducto;
+import co.edu.usa.restg33.model.Usuario;
+import co.edu.usa.restg33.repository.ProductoRepository;
+import co.edu.usa.restg33.repository.RegistroProductoRepository;
+import co.edu.usa.restg33.repository.UsuarioRepository;
+import co.edu.usa.restg33.view.Login;
+import co.edu.usa.restg33.view.RegistroUsuarios;
+import co.edu.usa.restg33.view.Vista;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+
 
 @EntityScan(basePackages = {"co.edu.usa.restg33.model"})
 @SpringBootApplication
 public class Restg33Application {
 
     @Autowired
-    private CategoryRepository repoCategory;
+    private ProductoRepository repoCategory;
     @Autowired
-    private ClientRepository repoClient;
+    private RegistroProductoRepository repoClient;
     @Autowired
-    private MessageRepository repoMessage;
-    @Autowired
-    private QuadbikeRepository repoQuadbike;
-    @Autowired
-    private ReservationRepository repoReservation;
+    private UsuarioRepository repoUsuario;
+    
     
     public static void main(String[] args) {
-        SpringApplication.run(Restg33Application.class, args);
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(Restg33Application.class);
+        builder.headless(false);
+        ConfigurableApplicationContext context = builder.run(args);
+        
     }
 
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
-            List<Category> pca = repoCategory.getAll();
-            System.out.println("Category: "+pca.size());
             
-            List<Client> pc = repoClient.getAll();
-            System.out.println("Client: "+pc.size());
+            Vista vista = new Vista();
+            RegistroUsuarios registro = new RegistroUsuarios();
+            Login login = new Login();
+            Controlador controlador = new Controlador(repoCategory,repoUsuario,repoClient,vista,registro, login);
             
-            List<Message> pm = repoMessage.getAll();
-            System.out.println("Message: "+pm.size());
+            List<Producto> pca = repoCategory.getAll();
+            System.out.println("Producto: "+pca.size());
             
-            List<Quadbike> pq = repoQuadbike.getAll();
-            System.out.println("Quadbike: "+pq.size());
+            List<RegistroProducto> pc = repoClient.getAll();
+            System.out.println("Registros: "+pc.size());
             
-            List<Reservation> pr = repoReservation.getAll();
-            System.out.println("Reservation: "+pr.size());
+            List<Usuario> pm = repoUsuario.getAll();
+            System.out.println("Usuarios: "+pm.size());
+            
         };
     }
 }
